@@ -1,0 +1,14 @@
+{
+    "name": "Pathfinding.ContextSteering",
+    "rootNamespace": "Pathfinding.ContextSteering",
+    "references": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
