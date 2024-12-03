@@ -291,6 +291,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d776864d8e5ed43ae91d1fa7aee27830, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _obstacleLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  _detectionRadius: 1
+  _targetPosition: {x: 0, y: 0}
+  _moveSpeed: 2
+  _stoppingDistance: 0.3
+  _moveDirection: {x: 0, y: 0}
 --- !u!1001 &9088233927518236558
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -302,6 +310,10 @@ PrefabInstance:
     - target: {fileID: 4463999962119829747, guid: d02f5c5833a1e4e72941d01ae7854ec9, type: 3}
       propertyPath: m_Name
       value: ObstacleSpawner
+      objectReference: {fileID: 0}
+    - target: {fileID: 6193034385774066779, guid: d02f5c5833a1e4e72941d01ae7854ec9, type: 3}
+      propertyPath: _spawnRadius
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 8266481517394705442, guid: d02f5c5833a1e4e72941d01ae7854ec9, type: 3}
       propertyPath: m_LocalPosition.x

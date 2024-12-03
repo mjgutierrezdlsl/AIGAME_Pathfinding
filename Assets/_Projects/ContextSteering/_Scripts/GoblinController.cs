@@ -6,24 +6,31 @@ namespace Pathfinding.ContextSteering
 {
     public class GoblinController : MonoBehaviour
     {
-        [Header("Context Steering")] [SerializeField]
-        LayerMask _obstacleLayer = 1 << 6;
-
+        [Header("Context Steering")]
+        [SerializeField] LayerMask _obstacleLayer = 1 << 6;
         [SerializeField] float _detectionRadius = 3f;
         [SerializeField] Vector2 _targetPosition;
-        Camera _camera;
 
-        [Header("Movement")] [SerializeField] float _moveSpeed = 2f;
+
+        [Header("Movement")]
+        [SerializeField] float _moveSpeed = 2f;
         [SerializeField] float _stoppingDistance = 0.3f;
+        public Vector2 _moveDirection;
+
+        Camera _camera;
+        Rigidbody2D _rigidbody;
+        Animator _animator;
 
         private void Awake()
         {
             _camera = Camera.main;
+            _rigidbody = GetComponent<Rigidbody2D>();
+            _animator = GetComponent<Animator>();
         }
 
         private void Update()
         {
-            if (Input.GetMouseButtonDown(0))
+            if (Input.GetMouseButton(0))
             {
                 var mousePos = _camera.ScreenToWorldPoint(Input.mousePosition);
                 _targetPosition = mousePos;
@@ -33,17 +40,34 @@ namespace Pathfinding.ContextSteering
             {
                 _targetPosition = transform.position;
             }
+
+            if (Vector3.Distance(transform.position, _targetPosition) <= _stoppingDistance) { return; }
+            _moveDirection = (_targetPosition - (Vector2)transform.position).normalized;
+            var hitInfo = Physics2D.CircleCast(transform.position, 0.3f, _moveDirection, _detectionRadius, _obstacleLayer);
+            Debug.DrawRay(transform.position, _moveDirection * _detectionRadius, hitInfo ? Color.red : Color.green);
+            if (hitInfo)
+            {
+                // calculate new direction
+                Debug.DrawLine(hitInfo.point, hitInfo.normal, hitInfo ? Color.magenta : Color.clear);
+                Debug.DrawLine(transform.position, hitInfo.normal, hitInfo ? Color.yellow : Color.clear);
+                _moveDirection = (hitInfo.normal - (Vector2)transform.position).normalized;
+            }
+        }
+        private void FixedUpdate()
+        {
+            if (Vector3.Distance(transform.position, _targetPosition) <= _stoppingDistance) { return; }
+            _rigidbody.MovePosition(_rigidbody.position + _moveDirection * _moveSpeed * Time.fixedDeltaTime);
         }
 
         private void OnDrawGizmos()
         {
             Gizmos.color = Color.yellow;
             Gizmos.DrawWireSphere(transform.position, _detectionRadius);
-            Gizmos.color = Color.white;
-            foreach (var direction in Directions.Octal)
-            {
-                Gizmos.DrawLine(transform.position, direction);
-            }
+            // Gizmos.color = Color.white;
+            // foreach (var direction in Directions.Octal)
+            // {
+            //     Gizmos.DrawLine(transform.position, direction);
+            // }
 
             if (Vector3.Distance(transform.position,_targetPosition)<=Mathf.Epsilon) return;
             Gizmos.color = Color.green;
