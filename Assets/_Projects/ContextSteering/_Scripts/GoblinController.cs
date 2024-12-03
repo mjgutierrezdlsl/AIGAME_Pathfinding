@@ -21,6 +21,7 @@ namespace Pathfinding.ContextSteering
         Rigidbody2D _rigidbody;
         Animator _animator;
         RaycastHit2D _hitInfo;
+        bool _isFacingLeft;
 
         private void Awake()
         {
@@ -42,10 +43,26 @@ namespace Pathfinding.ContextSteering
                 _targetPosition = transform.position;
             }
 
-            if (Vector3.Distance(transform.position, _targetPosition) <= _stoppingDistance) { return; }
+            _animator.SetBool("isMoving", _moveDirection != Vector2.zero);
+
+            if (Vector3.Distance(transform.position, _targetPosition) <= _stoppingDistance)
+            {
+                _moveDirection = Vector2.zero;
+                return;
+            }
             _moveDirection = (_targetPosition - (Vector2)transform.position).normalized;
+            _isFacingLeft = _moveDirection.x switch
+            {
+                < 0 => true,
+                > 0 => false,
+                _ => _isFacingLeft,
+            };
+            transform.rotation = Quaternion.Euler(new(0, _isFacingLeft ? 180f : 0, 0));
             _hitInfo = Physics2D.CircleCast(transform.position, 0.3f, _moveDirection, _detectionRadius, _obstacleLayer);
             Debug.DrawRay(transform.position, _moveDirection * _detectionRadius, _hitInfo ? Color.red : Color.green);
+            var dot = Vector2.Dot(transform.right, _moveDirection);
+            Debug.DrawLine(transform.position, transform.position + transform.right, Color.cyan);
+            print($"Dot: {dot}");
             if (_hitInfo)
             {
                 // calculate new direction
@@ -62,13 +79,15 @@ namespace Pathfinding.ContextSteering
 
         private void OnDrawGizmos()
         {
-            Gizmos.color = Color.yellow;
-            Gizmos.DrawWireSphere(transform.position, _detectionRadius);
+            // Gizmos.color = Color.yellow;
+            // Gizmos.DrawWireSphere(transform.position, _detectionRadius);
             // Gizmos.color = Color.white;
             // foreach (var direction in Directions.Octal)
             // {
             //     Gizmos.DrawLine(transform.position, direction);
             // }
+            Gizmos.color = Color.cyan;
+            Gizmos.DrawLine(transform.position, transform.position + transform.right);
             if (_hitInfo)
             {
                 Gizmos.color = Color.red;
