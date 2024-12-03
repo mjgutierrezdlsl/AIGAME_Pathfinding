@@ -20,6 +20,7 @@ namespace Pathfinding.ContextSteering
         Camera _camera;
         Rigidbody2D _rigidbody;
         Animator _animator;
+        RaycastHit2D _hitInfo;
 
         private void Awake()
         {
@@ -43,14 +44,14 @@ namespace Pathfinding.ContextSteering
 
             if (Vector3.Distance(transform.position, _targetPosition) <= _stoppingDistance) { return; }
             _moveDirection = (_targetPosition - (Vector2)transform.position).normalized;
-            var hitInfo = Physics2D.CircleCast(transform.position, 0.3f, _moveDirection, _detectionRadius, _obstacleLayer);
-            Debug.DrawRay(transform.position, _moveDirection * _detectionRadius, hitInfo ? Color.red : Color.green);
-            if (hitInfo)
+            _hitInfo = Physics2D.CircleCast(transform.position, 0.3f, _moveDirection, _detectionRadius, _obstacleLayer);
+            Debug.DrawRay(transform.position, _moveDirection * _detectionRadius, _hitInfo ? Color.red : Color.green);
+            if (_hitInfo)
             {
                 // calculate new direction
-                Debug.DrawLine(hitInfo.point, hitInfo.normal, hitInfo ? Color.magenta : Color.clear);
-                Debug.DrawLine(transform.position, hitInfo.normal, hitInfo ? Color.yellow : Color.clear);
-                _moveDirection = (hitInfo.normal - (Vector2)transform.position).normalized;
+                Debug.DrawLine(_hitInfo.point, _hitInfo.normal, _hitInfo ? Color.magenta : Color.clear);
+                Debug.DrawLine(transform.position, _hitInfo.normal, _hitInfo ? Color.yellow : Color.clear);
+                _moveDirection = (_hitInfo.normal - (Vector2)transform.position).normalized;
             }
         }
         private void FixedUpdate()
@@ -68,7 +69,11 @@ namespace Pathfinding.ContextSteering
             // {
             //     Gizmos.DrawLine(transform.position, direction);
             // }
-
+            if (_hitInfo)
+            {
+                Gizmos.color = Color.red;
+                Gizmos.DrawWireSphere(_hitInfo.point, 0.3f);
+            }
             if (Vector3.Distance(transform.position,_targetPosition)<=Mathf.Epsilon) return;
             Gizmos.color = Color.green;
             Gizmos.DrawSphere(_targetPosition, 0.3f);
