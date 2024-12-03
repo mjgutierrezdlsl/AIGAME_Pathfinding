@@ -60,15 +60,12 @@ namespace Pathfinding.ContextSteering
             transform.rotation = Quaternion.Euler(new(0, _isFacingLeft ? 180f : 0, 0));
             _hitInfo = Physics2D.CircleCast(transform.position, 0.3f, _moveDirection, _detectionRadius, _obstacleLayer);
             Debug.DrawRay(transform.position, _moveDirection * _detectionRadius, _hitInfo ? Color.red : Color.green);
-            var dot = Vector2.Dot(transform.right, _moveDirection);
-            Debug.DrawLine(transform.position, transform.position + transform.right, Color.cyan);
-            print($"Dot: {dot}");
             if (_hitInfo)
             {
                 // calculate new direction
                 Debug.DrawLine(_hitInfo.point, _hitInfo.normal, _hitInfo ? Color.magenta : Color.clear);
                 Debug.DrawLine(transform.position, _hitInfo.normal, _hitInfo ? Color.yellow : Color.clear);
-                _moveDirection = (_hitInfo.normal - (Vector2)transform.position).normalized;
+                _moveDirection = _hitInfo.normal;
             }
         }
         private void FixedUpdate()
@@ -86,8 +83,6 @@ namespace Pathfinding.ContextSteering
             // {
             //     Gizmos.DrawLine(transform.position, direction);
             // }
-            Gizmos.color = Color.cyan;
-            Gizmos.DrawLine(transform.position, transform.position + transform.right);
             if (_hitInfo)
             {
                 Gizmos.color = Color.red;

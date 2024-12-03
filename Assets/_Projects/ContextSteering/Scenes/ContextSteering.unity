@@ -294,7 +294,7 @@ MonoBehaviour:
   _obstacleLayer:
     serializedVersion: 2
     m_Bits: 64
-  _detectionRadius: 3
+  _detectionRadius: 1
   _targetPosition: {x: 0, y: 0}
   _moveSpeed: 2
   _stoppingDistance: 0.3
