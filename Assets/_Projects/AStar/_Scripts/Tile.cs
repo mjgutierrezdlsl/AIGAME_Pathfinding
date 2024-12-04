@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,10 +7,11 @@ namespace Pathfinding.AStar
 {
     public class Tile : MonoBehaviour
     {
-        [SerializeField] Color _baseColor = Color.green, _offsetColor = Color.yellow, _deselectedColor = Color.white, _selectedColor = Color.red;
+        [SerializeField] Color _baseColor = Color.green, _offsetColor = Color.yellow;
         [SerializeField] GameObject _highlight;
         SpriteRenderer _renderer;
-        bool _isSelected;
+        private Color _defaultColor;
+        public Vector2Int Position => Vector2Int.RoundToInt(transform.position);
         private void Awake()
         {
             _renderer = GetComponent<SpriteRenderer>();
@@ -17,7 +19,7 @@ namespace Pathfinding.AStar
         public void Init(bool isOffset)
         {
             _renderer.color = isOffset ? _offsetColor : _baseColor;
-            _deselectedColor = _renderer.color;
+            _defaultColor = _renderer.color;
         }
         private void OnMouseEnter()
         {
@@ -27,8 +29,13 @@ namespace Pathfinding.AStar
         {
             _highlight.SetActive(false);
         }
-        private void OnMouseDown()
+        public void ResetColor()
         {
+            _renderer.color = _defaultColor;
+        }
+        public void SetColor(Color color)
+        {
+            _renderer.color = color;
         }
     }
 }

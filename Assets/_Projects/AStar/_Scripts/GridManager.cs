@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,9 +9,12 @@ namespace Pathfinding.AStar
     {
         [SerializeField] int _width, _height;
         [SerializeField] Tile _tilePrefab;
+
         public static GridManager Instance;
-        Camera _camera;
+
+        private Camera _camera;
         private Dictionary<Vector2, Tile> _tiles;
+
         private void Awake()
         {
             _camera = Camera.main;
@@ -29,6 +33,7 @@ namespace Pathfinding.AStar
         {
             GenerateGrid();
         }
+
         void GenerateGrid()
         {
             _tiles = new();
@@ -45,6 +50,7 @@ namespace Pathfinding.AStar
             }
             _camera.transform.position = new((float)_width / 2 - 0.5f, (float)_height / 2 - 0.5f, -10);
         }
+
         public Tile GetTile(Vector2 pos)
         {
             return _tiles.TryGetValue(pos, out var tile) ? tile : null;
