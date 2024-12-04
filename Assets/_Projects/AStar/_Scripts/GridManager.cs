@@ -46,6 +46,7 @@ namespace Pathfinding.AStar
                     var isOffset = (x % 2 == 0 && y % 2 != 0) || (x % 2 != 0 && y % 2 == 0);
                     tile.Init(isOffset);
                     _tiles[new(x, y)] = tile;
+                    tile.Node.CacheNeighbors();
                 }
             }
             _camera.transform.position = new((float)_width / 2 - 0.5f, (float)_height / 2 - 0.5f, -10);

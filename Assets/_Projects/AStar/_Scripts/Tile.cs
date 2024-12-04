@@ -9,9 +9,14 @@ namespace Pathfinding.AStar
     {
         [SerializeField] Color _baseColor = Color.green, _offsetColor = Color.yellow;
         [SerializeField] GameObject _highlight;
-        SpriteRenderer _renderer;
+
+        private SpriteRenderer _renderer;
         private Color _defaultColor;
+
+        [field: SerializeField] public NodeBase Node { get; private set; }
+
         public Vector2Int Position => Vector2Int.RoundToInt(transform.position);
+
         private void Awake()
         {
             _renderer = GetComponent<SpriteRenderer>();
@@ -20,6 +25,7 @@ namespace Pathfinding.AStar
         {
             _renderer.color = isOffset ? _offsetColor : _baseColor;
             _defaultColor = _renderer.color;
+            Node = new(this);
         }
         private void OnMouseEnter()
         {
