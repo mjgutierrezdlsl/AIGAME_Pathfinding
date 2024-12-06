@@ -101,7 +101,6 @@ namespace Tarodev_Pathfinding._Scripts {
                         currentPathTile = currentPathTile.Connection;
                         count--;
                         if (count < 0) throw new Exception();
-                        Debug.Log("sdfsdf");
                     }
                     
                     foreach (var tile in path) tile.SetColor(PathColor);

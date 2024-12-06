@@ -24,6 +24,7 @@ namespace Tarodev_Pathfinding._Scripts.Grid {
         private NodeBase _playerNodeBase, _goalNodeBase;
         private Unit _spawnedPlayer, _spawnedGoal;
         private Coroutine _followRoutine;
+        private Coroutine _animateRoutine;
 
         private void Awake()
         {
@@ -62,7 +63,11 @@ namespace Tarodev_Pathfinding._Scripts.Grid {
             }
             else
             {
-                StartCoroutine(Pathfinding.AnimatePath(_playerNodeBase, _goalNodeBase, _interval));
+                if (_animateRoutine != null)
+                {
+                    StopCoroutine(_animateRoutine);
+                }
+                _animateRoutine = StartCoroutine(Pathfinding.AnimatePath(_playerNodeBase, _goalNodeBase, _interval));
             }
         }
 
