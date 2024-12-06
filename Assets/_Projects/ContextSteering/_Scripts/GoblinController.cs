@@ -9,6 +9,7 @@ namespace Pathfinding.ContextSteering
         [Header("Context Steering")]
         [SerializeField] LayerMask _obstacleLayer = 1 << 6;
         [SerializeField] float _detectionRadius = 3f;
+        [SerializeField] float _visionRadius = 0.3f;
         [SerializeField] Vector2 _targetPosition;
 
 
@@ -58,14 +59,14 @@ namespace Pathfinding.ContextSteering
                 _ => _isFacingLeft,
             };
             transform.rotation = Quaternion.Euler(new(0, _isFacingLeft ? 180f : 0, 0));
-            _hitInfo = Physics2D.CircleCast(transform.position, 0.3f, _moveDirection, _detectionRadius, _obstacleLayer);
+            _hitInfo = Physics2D.CircleCast(transform.position, _visionRadius, _moveDirection, _detectionRadius, _obstacleLayer);
             Debug.DrawRay(transform.position, _moveDirection * _detectionRadius, _hitInfo ? Color.red : Color.green);
             if (_hitInfo)
             {
                 // calculate new direction
                 Debug.DrawLine(_hitInfo.point, _hitInfo.normal, _hitInfo ? Color.magenta : Color.clear);
                 Debug.DrawLine(transform.position, _hitInfo.normal, _hitInfo ? Color.yellow : Color.clear);
-                _moveDirection = _hitInfo.normal;
+                _moveDirection = (_hitInfo.normal - (Vector2)transform.position).normalized;
             }
         }
         private void FixedUpdate()
@@ -86,7 +87,12 @@ namespace Pathfinding.ContextSteering
             if (_hitInfo)
             {
                 Gizmos.color = Color.red;
-                Gizmos.DrawWireSphere(_hitInfo.point, 0.3f);
+                Gizmos.DrawWireSphere(_hitInfo.point, _visionRadius);
+            }
+            else
+            {
+                Gizmos.color = Color.green;
+                Gizmos.DrawWireSphere((Vector2)transform.position + _moveDirection, _visionRadius);
             }
             if (Vector3.Distance(transform.position,_targetPosition)<=Mathf.Epsilon) return;
             Gizmos.color = Color.green;
