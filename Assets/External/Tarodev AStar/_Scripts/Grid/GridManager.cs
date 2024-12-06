@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using _Scripts.Tiles;
@@ -17,10 +18,16 @@ namespace Tarodev_Pathfinding._Scripts.Grid {
 
         public Dictionary<Vector2, NodeBase> Tiles { get; private set; }
 
+        private Camera _camera;
         private NodeBase _playerNodeBase, _goalNodeBase;
         private Unit _spawnedPlayer, _spawnedGoal;
 
-        void Awake() => Instance = this;
+        private void Awake()
+        {
+            Instance = this;
+
+            _camera = Camera.main;
+        }
 
         private void Start() {
             Tiles = _scriptableGrid.GenerateGrid();
@@ -29,7 +36,11 @@ namespace Tarodev_Pathfinding._Scripts.Grid {
 
             SpawnUnits();
             NodeBase.OnHoverTile += OnTileHover;
+
+            _camera.transform.position = GetGridCenter();
         }
+
+        private Vector3 GetGridCenter() => new(_scriptableGrid.Width * 0.5f - 0.5f, _scriptableGrid.Height * 0.5f - 0.5f, _camera.transform.position.z);
 
         private void OnDestroy() => NodeBase.OnHoverTile -= OnTileHover;
 
@@ -40,6 +51,18 @@ namespace Tarodev_Pathfinding._Scripts.Grid {
             foreach (var t in Tiles.Values) t.RevertTile();
 
             var path = Pathfinding.FindPath(_playerNodeBase, _goalNodeBase);
+            StartCoroutine(FollowPath(path));
+        }
+
+        private IEnumerator FollowPath(List<NodeBase> path)
+        {
+            for (int i = path.Count - 1; i >= 0; i--)
+            {
+                yield return new WaitForSeconds(1f);
+                var nodePos = path[i].Coords.Pos;
+                _spawnedPlayer.transform.position = nodePos;
+            }
+            _spawnedGoal.gameObject.SetActive(false);
         }
 
         void SpawnUnits() {

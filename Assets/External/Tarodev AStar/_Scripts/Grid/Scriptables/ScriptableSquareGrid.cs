@@ -8,7 +8,10 @@ namespace Tarodev_Pathfinding._Scripts.Grid.Scriptables {
     {
         [SerializeField,Range(3,50)] private int _gridWidth = 16;
         [SerializeField,Range(3,50)] private int _gridHeight = 9;
-        
+
+        public override int Width => _gridWidth;
+        public override int Height => _gridHeight;
+
         public override Dictionary<Vector2, NodeBase> GenerateGrid() {
             var tiles = new Dictionary<Vector2, NodeBase>();
             var grid = new GameObject {
