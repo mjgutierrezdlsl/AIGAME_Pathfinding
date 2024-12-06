@@ -16,6 +16,7 @@ namespace Tarodev_Pathfinding._Scripts.Grid {
         [SerializeField] private ScriptableGrid _scriptableGrid;
         [SerializeField] private bool _drawConnections;
         [SerializeField] private bool _followPath;
+        [SerializeField] float _interval = 0.1f;
 
         public Dictionary<Vector2, NodeBase> Tiles { get; private set; }
 
@@ -52,12 +53,16 @@ namespace Tarodev_Pathfinding._Scripts.Grid {
 
             foreach (var t in Tiles.Values) t.RevertTile();
 
-            var path = Pathfinding.FindPath(_playerNodeBase, _goalNodeBase);
             if (_followPath)
             {
+                var path = Pathfinding.FindPath(_playerNodeBase, _goalNodeBase);
                 if (_followRoutine != null)
                     StopCoroutine(_followRoutine);
                 _followRoutine = StartCoroutine(FollowPath(path));
+            }
+            else
+            {
+                StartCoroutine(Pathfinding.AnimatePath(_playerNodeBase, _goalNodeBase, _interval));
             }
         }
 
@@ -66,7 +71,7 @@ namespace Tarodev_Pathfinding._Scripts.Grid {
             _spawnedGoal.gameObject.SetActive(true);
             for (int i = path.Count - 1; i >= 0; i--)
             {
-                yield return new WaitForSeconds(1f);
+                yield return new WaitForSeconds(_interval);
                 var nodePos = path[i].Coords.Pos;
                 _spawnedPlayer.transform.position = nodePos;
                 _playerNodeBase = Tiles[_spawnedPlayer.transform.position];
