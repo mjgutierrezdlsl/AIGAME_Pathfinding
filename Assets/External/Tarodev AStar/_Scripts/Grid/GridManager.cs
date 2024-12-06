@@ -15,6 +15,7 @@ namespace Tarodev_Pathfinding._Scripts.Grid {
         [SerializeField] private Unit _unitPrefab;
         [SerializeField] private ScriptableGrid _scriptableGrid;
         [SerializeField] private bool _drawConnections;
+        [SerializeField] private bool _followPath;
 
         public Dictionary<Vector2, NodeBase> Tiles { get; private set; }
 
@@ -51,7 +52,10 @@ namespace Tarodev_Pathfinding._Scripts.Grid {
             foreach (var t in Tiles.Values) t.RevertTile();
 
             var path = Pathfinding.FindPath(_playerNodeBase, _goalNodeBase);
-            StartCoroutine(FollowPath(path));
+            if (_followPath)
+            {
+                StartCoroutine(FollowPath(path));
+            }
         }
 
         private IEnumerator FollowPath(List<NodeBase> path)
