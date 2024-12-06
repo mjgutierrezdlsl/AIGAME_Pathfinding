@@ -22,6 +22,7 @@ namespace Tarodev_Pathfinding._Scripts.Grid {
         private Camera _camera;
         private NodeBase _playerNodeBase, _goalNodeBase;
         private Unit _spawnedPlayer, _spawnedGoal;
+        private Coroutine _followRoutine;
 
         private void Awake()
         {
@@ -54,17 +55,21 @@ namespace Tarodev_Pathfinding._Scripts.Grid {
             var path = Pathfinding.FindPath(_playerNodeBase, _goalNodeBase);
             if (_followPath)
             {
-                StartCoroutine(FollowPath(path));
+                if (_followRoutine != null)
+                    StopCoroutine(_followRoutine);
+                _followRoutine = StartCoroutine(FollowPath(path));
             }
         }
 
         private IEnumerator FollowPath(List<NodeBase> path)
         {
+            _spawnedGoal.gameObject.SetActive(true);
             for (int i = path.Count - 1; i >= 0; i--)
             {
                 yield return new WaitForSeconds(1f);
                 var nodePos = path[i].Coords.Pos;
                 _spawnedPlayer.transform.position = nodePos;
+                _playerNodeBase = Tiles[_spawnedPlayer.transform.position];
             }
             _spawnedGoal.gameObject.SetActive(false);
         }
